@@ -26,7 +26,7 @@ ADD /etc/ssl/certs/      /etc/ssl/certs/
 
 # Configure apt and install packages
 RUN set -x \
-    && if [ -n "$PROXY" ]; then echo "\n\
+    && if [ -n "$PROXY" ]; then echo -e "\n\
         ca_directory = /etc/ssl/certs/ \n\
         http_proxy = $PROXY \n\
         https_proxy = $PROXY \n\
@@ -60,17 +60,31 @@ RUN set -x \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     #
-# java 
+# Install java 
 #    && apt-get install dirmngr gnupg \
 #    && apt-key adv --keyserver keyserver.ubuntu.com $([ -n "$PROXY" ] && echo "--keyserver-option http-proxy=$PROXY") --recv-keys A66C5D02 \
 #    && echo 'deb https://rpardini.github.io/adoptopenjdk-deb-installer stable main' > /etc/apt/sources.list.d/rpardini-aoj.list \
 #    && apt-get update \
 #    && apt-get install -y adoptopenjdk-8-installer maven \
+    && echo -e "\
+[AdoptOpenJDK] \n\
+name=AdoptOpenJDK \n\
+baseurl=http://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/centos/7/$(uname -m) \n\
+enabled=1 \n\
+gpgcheck=1 \n\
+gpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public \n\
+" > /etc/yum.repos.d/adoptopenjdk.repo \
+    && cat /etc/yum.repos.d/adoptopenjdk.repo \
+    && yum install -y adoptopenjdk-8-hotspot.x86_64 \
+    && yum install -y maven \
     #
-# nodejs
+# Install nodejs
 #    && curl -sL https://deb.nodesource.com/setup_11.x | bash - \
 #    && apt-get install -y nodejs \
 #    && npm install n -g \
+    && curl -sL https://rpm.nodesource.com/setup_11.x | bash - \
+    && yum install -y nodejs \
+    && npm install n -g \
     #
 # 空パスワードの場合は以下をコメントアウト
     && sed -ri 's/^#PermitEmptyPasswords no/PermitEmptyPasswords yes/' /etc/ssh/sshd_config \
@@ -84,6 +98,8 @@ RUN set -x \
 #
     && ssh-keygen -A \
 #    && ssh-keygen -t rsa -N "" -f /etc/ssh/ssh_host_rsa_key \
+#
+    && mkdir $HOME/workspace \
 # Clean up
     && rm -rf /var/cache/yum/* \
     && yum clean all
