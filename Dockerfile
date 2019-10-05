@@ -21,6 +21,8 @@ ARG USER_GID=$USER_UID
 ARG PROXY=''
 ARG no_proxy='127.0.0.1,localhost,192.168.99.100,192.168.99.101,192.168.99.102,192.168.99.103,192.168.99.104,192.168.99.105,172.17.0.1'
 
+ENV JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot
+
 # 自己証明が必要な場合はここで組み込む
 ADD /etc/ssl/certs/      /etc/ssl/certs/
 
@@ -76,8 +78,16 @@ gpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public \n\
 " > /etc/yum.repos.d/adoptopenjdk.repo \
     && cat /etc/yum.repos.d/adoptopenjdk.repo \
     && yum install -y adoptopenjdk-8-hotspot.x86_64 \
-    && yum install -y maven \
+    && echo "export JAVA_HOME=${JAVA_HOME}" >> $HOME/.bashrc \
     #
+# Install maven
+    && curl https://www-us.apache.org/dist/maven/maven-3/3.6.2/binaries/apache-maven-3.6.2-bin.tar.gz -o /tmp/apache-maven-3.6.2-bin.tar.gz \
+    && tar xf /tmp/apache-maven-3.6.2-bin.tar.gz -C /usr/share \
+    && ln -s /usr/share/apache-maven-3.6.2 /usr/share/maven \
+    && echo "export M2_HOME=/usr/share/maven" >> $HOME/.bashrc \
+    && echo "export MAVEN_HOME=/usr/share/maven" >> $HOME/.bashrc \
+    && echo 'export PATH=${M2_HOME}/bin:${PATH}' >> $HOME/.bashrc \
+#
 # Install nodejs
 #    && curl -sL https://deb.nodesource.com/setup_11.x | bash - \
 #    && apt-get install -y nodejs \
@@ -100,6 +110,7 @@ gpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public \n\
 #    && ssh-keygen -t rsa -N "" -f /etc/ssh/ssh_host_rsa_key \
 #
     && mkdir $HOME/workspace \
+    
 # Clean up
     && rm -rf /var/cache/yum/* \
     && yum clean all
