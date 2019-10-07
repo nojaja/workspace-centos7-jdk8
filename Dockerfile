@@ -42,7 +42,7 @@ RUN set -x \
     # Verify git, process tools installed
     && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
     && yum -y install git2u \
-#    && yum -y install git \
+    && yum -y install git \
     #
     # Install Docker CE CLI
     && yum install -y yum-utils device-mapper-persistent-data lvm2 \
