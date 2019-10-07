@@ -42,9 +42,10 @@ RUN set -x \
     # Verify git, process tools installed
     && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
     && sed -ri 's/^#enabled=1/enabled=0/' /etc/yum.repos.d/ius.repo \
-    && yum -y install perl-Error perl-TermReadKey libsecret \
-#    && yum -y install git2u \
-    && yum -y install git --enablerepo=ius --disablerepo=base,epel,extras,updates \
+#    && yum -y install perl-Error perl-TermReadKey libsecret \
+    && yum -y install git2u --enablerepo=ius \
+    && git --version \
+#    && yum -y install git --enablerepo=ius --disablerepo=base,epel,extras,updates \
     #
     # Install Docker CE CLI
     && yum install -y yum-utils device-mapper-persistent-data lvm2 \
