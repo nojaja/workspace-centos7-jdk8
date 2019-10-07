@@ -43,8 +43,8 @@ RUN set -x \
     && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
     && sed -ri 's/^#enabled=1/enabled=0/' /etc/yum.repos.d/ius.repo \
 #    && yum -y install perl-Error perl-TermReadKey libsecret \
-    && git --version \
-    && yum -y remove git git-\* \
+#    && git --version \
+#    && yum -y remove git git-\* \
     && yum -y install git2u --enablerepo=ius \
     && git --version \
 #    && yum -y install git --enablerepo=ius --disablerepo=base,epel,extras,updates \
