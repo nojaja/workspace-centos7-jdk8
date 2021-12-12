@@ -40,12 +40,14 @@ RUN set -x \
     && yum -y install net-tools zip unzip \
     #
     # Verify git, process tools installed
-    && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
-    && sed -ri 's/^#enabled=1/enabled=0/' /etc/yum.repos.d/ius.repo \
+    #&& yum -y install https://repo.ius.io/ius-release-el7.rpm \
+    && yum -y install https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.9-1.x86_64.rpm \
+#    && sed -ri 's/^#enabled=1/enabled=0/' /etc/yum.repos.d/ius.repo \
 #    && yum -y install perl-Error perl-TermReadKey libsecret \
 #    && git --version \
 #    && yum -y remove git git-\* \
-    && yum -y install git2u --enablerepo=ius \
+#    && yum -y install git --enablerepo=ius \
+    && yum -y install git \
     && git --version \
 #    && yum -y install git --enablerepo=ius --disablerepo=base,epel,extras,updates \
     #
@@ -88,9 +90,10 @@ gpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public \n\
     && echo "export JAVA_HOME=${JAVA_HOME}" >> $HOME/.bashrc \
     #
 # Install maven
-    && curl https://www-us.apache.org/dist/maven/maven-3/3.6.2/binaries/apache-maven-3.6.2-bin.tar.gz -o /tmp/apache-maven-3.6.2-bin.tar.gz \
-    && tar xf /tmp/apache-maven-3.6.2-bin.tar.gz -C /usr/share \
-    && ln -s /usr/share/apache-maven-3.6.2 /usr/share/maven \
+    #&& curl https://www-us.apache.org/dist/maven/maven-3/3.6.2/binaries/apache-maven-3.6.2-bin.tar.gz -o /tmp/apache-maven-3.6.2-bin.tar.gz \
+    && curl https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.6.3/apache-maven-3.6.3-bin.tar.gz -o /tmp/apache-maven-3.6.3-bin.tar.gz \
+    && tar xf /tmp/apache-maven-3.6.3-bin.tar.gz -C /usr/share \
+    && ln -s /usr/share/apache-maven-3.6.3 /usr/share/maven \
     && echo "export M2_HOME=/usr/share/maven" >> $HOME/.bashrc \
     && echo "export MAVEN_HOME=/usr/share/maven" >> $HOME/.bashrc \
     && echo 'export PATH=${M2_HOME}/bin:${PATH}' >> $HOME/.bashrc \
